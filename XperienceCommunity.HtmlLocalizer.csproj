@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>13.5.0</Version>
+    <Authors>Trevor</Authors>
+    <Company>Heartland Business Systems</Company>
+    <Description>Adds fallback support to the IHtmlLocalizer that if a key is not found in the resx, it will use Kentico Xperience's localization and translation system in it's database.  Also allows you to use {$ $} for it to localize</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/KenticoDevTrev/KenticoHtmlLocalizer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/KenticoDevTrev/KenticoHtmlLocalizer</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageTags>Kentico, Xperience, Localizer, Translation</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Kentico.Xperience.AspNetCore.WebApp" Version="13.0.5" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\hbs-favicon-96x96.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
