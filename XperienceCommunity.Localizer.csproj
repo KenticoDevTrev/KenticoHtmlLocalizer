@@ -3,17 +3,19 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>13.5.0</Version>
+    <Version>13.5.1</Version>
     <Authors>Trevor</Authors>
     <Company>Heartland Business Systems</Company>
-    <Description>Adds fallback support to the IHtmlLocalizer that if a key is not found in the resx, it will use Kentico Xperience's localization and translation system in it's database.  Also allows you to use {$ $} for it to localize</Description>
+    <Description>Adds fallback support to the IHtmlLocalizer/IStringLocalizer that if a key is not found in the resx, it will use Kentico Xperience's localization and translation system in it's database.  Also allows you to use {$ $} for it to localize, works with data attributes as well</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/KenticoDevTrev/KenticoHtmlLocalizer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KenticoDevTrev/KenticoHtmlLocalizer</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
-    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed bug where dictionary of kentico localizations only initialized with the first culture.</PackageReleaseNotes>
     <PackageTags>Kentico, Xperience, Localizer, Translation</PackageTags>
+    <RootNamespace>XperienceCommunity.Localizer</RootNamespace>
+    <AssemblyName>XperienceCommunity.Localizer</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 
 
-# XperienceCommunity.HtmlLocalizer
-Adds fallback support of Kentico Xperience's Localization keys/translations to the default IHtmlLocalizer (and IStringLocalizer/IViewLocalizer)
+# XperienceCommunity.Localizer
+Adds fallback support of Kentico Xperience's Localization keys/translations to the default IHtmlLocalizer/IStringLocalizer/IViewLocalizer)
 
 In the past, most translation keys / translations were controlled through Kentico Xperience's Localization -> Resource strings.  This allowed users to create keys and translate them, with fall back to the default language.
 
@@ -10,16 +10,16 @@ This package restores that functionality, while allowing normal `.resx` resource
 # Installation and Requirements
 Kentico Xperience 13 (.net 5.0) required (minimum hotfix 5).
 To install...
-1. Install the `XperienceCommunity.HtmlLocalizer` package into your MVC site
+1. Install the `XperienceCommunity.Localizer` package into your MVC site
 2. add this line of code in your startup
 ```
 	services
 		.AddLocalization()
-        .AddXperienceLocalization() // MUST call after AddLocalization() !
+        .AddXperienceLocalizer() // MUST call after AddLocalization() !
 ```
 
 # Usage
-Use `IHtmlLocalizer` / `IStringLocalizer` as you would normally.  Now you also can put in Kentico Xperience Localization macros in your strings as well.  Here's some examples:
+Use `IHtmlLocalizer<>` / `IStringLocalizer<>` as you would normally.  Now you also can put in Kentico Xperience Localization macros in your strings as well.  Here's some examples:
 
 ``` cshtml
 @inject IHtmlLocalizer<SharedResources> HtmlLocalizer;
@@ -34,7 +34,7 @@ Use `IHtmlLocalizer` / `IStringLocalizer` as you would normally.  Now you also c
 **In Startup**
 ``` csharp
 services.AddLocalization()
-	.AddXperienceLocalization() // Call after AddLocalization, adds Kentico Resource String support
+	.AddXperienceLocalizer() // Call after AddLocalization, adds Kentico Resource String support
 	.AddControllersWithViews()
 	.AddViewLocalization() // honestly couldn't get View Localization to ever work...
 	.AddDataAnnotationsLocalization(options =>

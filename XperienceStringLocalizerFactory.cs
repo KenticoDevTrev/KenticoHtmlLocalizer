@@ -1,20 +1,19 @@
 ﻿using CMS.Base;
 using CMS.Helpers;
 using CMS.SiteProvider;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
 
-namespace XperienceCommunity.HtmlLocalizer
+namespace XperienceCommunity.Localizer.Internal
 {
-    public class KenticoStringLocalizerFactory : IStringLocalizerFactory
+    internal class XperienceStringLocalizerFactory : IStringLocalizerFactory
     {
         private readonly IStringLocalizerFactory _baseStringLocalizerFactory;
         private readonly ISiteInfoProvider _siteInfoProvider;
         private readonly IProgressiveCache _progressiveCache;
         private readonly ISiteService _siteService;
 
-        public KenticoStringLocalizerFactory(IStringLocalizerFactory baseStringLocalizerFactory,
+        public XperienceStringLocalizerFactory(IStringLocalizerFactory baseStringLocalizerFactory,
             ISiteInfoProvider siteInfoProvider,
             IProgressiveCache progressiveCache,
             ISiteService siteService)
@@ -30,7 +29,7 @@ namespace XperienceCommunity.HtmlLocalizer
             var baseLocalizer = _baseStringLocalizerFactory.Create(resourceSource);
             return _progressiveCache.Load(cs =>
             {
-                return new KenticoStringLocalizer(baseLocalizer, _siteInfoProvider, _progressiveCache, _siteService);
+                return new XperienceStringLocalizer(baseLocalizer, _siteInfoProvider, _progressiveCache, _siteService);
             }, new CacheSettings(1440, "GetStringLocalizer", baseLocalizer.GetType().FullName));
         }
 
@@ -39,7 +38,7 @@ namespace XperienceCommunity.HtmlLocalizer
             var baseLocalizer = _baseStringLocalizerFactory.Create(baseName, location);
             return _progressiveCache.Load(cs =>
             {
-                return new KenticoStringLocalizer(baseLocalizer, _siteInfoProvider, _progressiveCache, _siteService);
+                return new XperienceStringLocalizer(baseLocalizer, _siteInfoProvider, _progressiveCache, _siteService);
             }, new CacheSettings(1440, "GetStringLocalizer", baseLocalizer.GetType().FullName));
         }
     }

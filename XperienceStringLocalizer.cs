@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace XperienceCommunity.HtmlLocalizer
+namespace XperienceCommunity.Localizer.Internal
 {
-    public class KenticoStringLocalizer<T> : KenticoLocalizerBase, IStringLocalizer<T>
+    internal class XperienceStringLocalizer<T> : XperienceStringLocalizerBase, IStringLocalizer<T>
     {
         private readonly IStringLocalizer<T> _localizer;
 
@@ -17,7 +17,7 @@ namespace XperienceCommunity.HtmlLocalizer
         /// Creates a new <see cref="HtmlLocalizer"/>.
         /// </summary>
         /// <param name="localizer">The <see cref="IStringLocalizer"/> to read strings from.</param>
-        public KenticoStringLocalizer(IStringLocalizer<T> localizer,
+        public XperienceStringLocalizer(IStringLocalizer<T> localizer,
             ISiteInfoProvider siteInfoProvider,
             IProgressiveCache progressiveCache,
             ISiteService siteService) : base(siteInfoProvider, progressiveCache, siteService)
@@ -35,7 +35,7 @@ namespace XperienceCommunity.HtmlLocalizer
             var strings = new List<LocalizedString>();
             strings.AddRange(_localizer.GetAllStrings(includeParentCultures));
             // add custom strings
-            strings.AddRange(KenticoResourceStrings.Select(x => new LocalizedString(x.Key, x.Value, true)));
+            strings.AddRange(XperienceResourceStrings.Select(x => new LocalizedString(x.Key, x.Value, true)));
             return strings;
         }
 
@@ -77,7 +77,7 @@ namespace XperienceCommunity.HtmlLocalizer
 
     }
 
-    public class KenticoStringLocalizer : KenticoLocalizerBase, IStringLocalizer
+    public class XperienceStringLocalizer : XperienceStringLocalizerBase, IStringLocalizer
     {
         private readonly IStringLocalizer _localizer;
 
@@ -85,7 +85,7 @@ namespace XperienceCommunity.HtmlLocalizer
         /// Creates a new <see cref="HtmlLocalizer"/>.
         /// </summary>
         /// <param name="localizer">The <see cref="IStringLocalizer"/> to read strings from.</param>
-        public KenticoStringLocalizer(IStringLocalizer localizer,
+        public XperienceStringLocalizer(IStringLocalizer localizer,
             ISiteInfoProvider siteInfoProvider,
             IProgressiveCache progressiveCache,
             ISiteService siteService) : base(siteInfoProvider, progressiveCache, siteService)
@@ -105,7 +105,7 @@ namespace XperienceCommunity.HtmlLocalizer
             var strings = new List<LocalizedString>();
             strings.AddRange(_localizer.GetAllStrings(includeParentCultures));
             // add custom strings
-            strings.AddRange(KenticoResourceStrings.Select(x => new LocalizedString(x.Key, x.Value, true)));
+            strings.AddRange(XperienceResourceStrings.Select(x => new LocalizedString(x.Key, x.Value, true)));
             return strings;
         }
 
