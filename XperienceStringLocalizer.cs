@@ -35,7 +35,7 @@ namespace XperienceCommunity.Localizer.Internal
             var strings = new List<LocalizedString>();
             strings.AddRange(_localizer.GetAllStrings(includeParentCultures));
             // add custom strings
-            strings.AddRange(XperienceResourceStrings.Select(x => new LocalizedString(x.Key, x.Value, true)));
+            strings.AddRange(XperienceResourceStrings.Select(x => new LocalizedString(x.Key, x.Value, false)));
             return strings;
         }
 
@@ -105,7 +105,7 @@ namespace XperienceCommunity.Localizer.Internal
             var strings = new List<LocalizedString>();
             strings.AddRange(_localizer.GetAllStrings(includeParentCultures));
             // add custom strings
-            strings.AddRange(XperienceResourceStrings.Select(x => new LocalizedString(x.Key, x.Value, true)));
+            strings.AddRange(XperienceResourceStrings.Select(x => new LocalizedString(x.Key, x.Value, false)));
             return strings;
         }
 

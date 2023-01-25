@@ -121,7 +121,7 @@ namespace XperienceCommunity.Localizer.Internal
             {
                 value = string.Format(value, arguments);
             }
-            return new LocalizedString(name, value, !string.IsNullOrWhiteSpace(value));
+            return new LocalizedString(name, value, string.IsNullOrWhiteSpace(value));
         }
     }
 }
