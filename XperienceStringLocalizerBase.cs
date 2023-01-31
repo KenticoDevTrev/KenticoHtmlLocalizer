@@ -26,7 +26,7 @@ namespace XperienceCommunity.Localizer.Internal
             _siteInfoProvider = siteInfoProvider;
         }
 
-        internal string _culture
+        static string CurrentCulture
         {
             get
             {
@@ -34,11 +34,19 @@ namespace XperienceCommunity.Localizer.Internal
             }
         }
 
-        internal string _defaultCulture
+        internal Dictionary<string, string> XperienceResourceStrings
         {
             get
             {
-                int siteID = _siteService.CurrentSite?.SiteID ?? 1;
+                return GetDictionary(CurrentCulture);
+            }
+        }
+
+        internal string DefaultCulture
+        {
+            get
+            {
+                int siteID = _siteService.CurrentSite?.SiteID ?? -1;
                 var site = _progressiveCache.Load(cs =>
                 {
                     if (cs.Cached)
@@ -46,28 +54,17 @@ namespace XperienceCommunity.Localizer.Internal
                         cs.CacheDependency = CacheHelper.GetCacheDependency($"{SiteInfo.OBJECT_TYPE}|byid|{siteID}");
                     }
 
-                    return _siteInfoProvider.Get(siteID);
+                    return siteID > 0 ? _siteInfoProvider.Get(siteID) : _siteInfoProvider.Get().First();
                 }, new CacheSettings(1440, "StringLocalizerSite", siteID));
                 return site.DefaultVisitorCulture;
             }
         }
-        private Dictionary<string, Dictionary<string, string>> _xperienceResourceStrings { get; set; } = new Dictionary<string, Dictionary<string, string>>();
 
-        internal Dictionary<string, string> XperienceResourceStrings { get
-            {
-                if(!_xperienceResourceStrings.ContainsKey(_culture))
-                {
-                    InitializeDictionary(_culture);
-                }
-                return _xperienceResourceStrings[_culture];
-            }
-        }
-
-        private void InitializeDictionary(string cultureName)
+        private Dictionary<string, string> GetDictionary(string cultureName)
         {
 
             // Now load up dictionary
-            _xperienceResourceStrings.Add(cultureName, _progressiveCache.Load(cs =>
+            return _progressiveCache.Load(cs =>
             {
                 if (cs.Cached)
                 {
@@ -80,26 +77,28 @@ namespace XperienceCommunity.Localizer.Internal
 
                 var results = ConnectionHelper.ExecuteQuery(
                     @"select StringKey, TranslationText from (
-                        select ROW_NUMBER() over (partition by StringKey order by case when CultureCode = '" + _culture + @"' then 0 else 1 end) as priority, StringKey, TranslationText from CMS_ResourceString
+                        select ROW_NUMBER() over (partition by StringKey order by case when CultureCode = '" + cultureName + @"' then 0 else 1 end) as priority, StringKey, TranslationText from CMS_ResourceString
                         left join CMS_ResourceTranslation on StringID = TranslationStringID
                         left join CMS_Culture on TranslationCultureID = CultureID
-                        where CultureCode in ('" + _culture + @"', '" + _defaultCulture + @"')
+                        where CultureCode in ('" + cultureName + @"', '" + DefaultCulture + @"')
                         ) combined where priority = 1"
                     , null, QueryTypeEnum.SQLQuery);
                 return results.Tables[0].Rows.Cast<DataRow>()
                     .Select(x => new Tuple<string, string>(ValidationHelper.GetString(x["StringKey"], "").ToLower(), ValidationHelper.GetString(x["TranslationText"], "")))
                     .GroupBy(x => x.Item1)
                     .ToDictionary(key => key.Key, value => value.FirstOrDefault().Item2);
-            }, new CacheSettings(1440, "LocalizedStringDictionary", _culture, _defaultCulture)));
+            }, new CacheSettings(1440, "LocalizedStringDictionary", cultureName, DefaultCulture));
         }
 
         internal LocalizedString LocalizeWithKentico(string name, params object[] arguments)
         {
             string value = string.Empty;
+            var dictionary = GetDictionary(CurrentCulture);
             string key = name.ToLower().Replace("{$", "").Replace("$}", "").Trim();
-            if (XperienceResourceStrings.ContainsKey(key.ToLower()))
+
+            if (dictionary.ContainsKey(key.ToLower()))
             {
-                value = XperienceResourceStrings[key.ToLower()];
+                value = dictionary[key.ToLower()];
             }
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -114,8 +113,8 @@ namespace XperienceCommunity.Localizer.Internal
                             $"{ResourceTranslationInfo.OBJECT_TYPE}|all",
                         });
                     }
-                    return ResHelper.LocalizeString(name, _culture);
-                }, new CacheSettings(30, "ResHelperLocalization", name, _culture, _defaultCulture));
+                    return ResHelper.LocalizeString(name, CurrentCulture);
+                }, new CacheSettings(30, "ResHelperLocalization", name, CurrentCulture, DefaultCulture));
             }
             if (arguments.Length > 0 && !string.IsNullOrWhiteSpace(value))
             {
