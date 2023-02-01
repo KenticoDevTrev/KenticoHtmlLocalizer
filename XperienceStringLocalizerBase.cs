@@ -4,6 +4,7 @@ using CMS.Helpers;
 using CMS.Localization;
 using CMS.SiteProvider;
 using Microsoft.Extensions.Localization;
+using Org.BouncyCastle.Bcpg.Sig;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -42,7 +43,7 @@ namespace XperienceCommunity.Localizer.Internal
             }
         }
 
-        internal string DefaultCulture
+        internal string SiteVisitorDefaultCulture
         {
             get
             {
@@ -57,6 +58,26 @@ namespace XperienceCommunity.Localizer.Internal
                     return siteID > 0 ? _siteInfoProvider.Get(siteID) : _siteInfoProvider.Get().First();
                 }, new CacheSettings(1440, "StringLocalizerSite", siteID));
                 return site.DefaultVisitorCulture;
+            }
+        }
+
+        internal string CMSDefaultCulture
+        {
+            get
+            {
+                int siteID = _siteService.CurrentSite?.SiteID ?? -1;
+                return _progressiveCache.Load(cs =>
+                {
+                    if (cs.Cached)
+                    {
+                        cs.CacheDependency = CacheHelper.GetCacheDependency($"{SettingsKeyInfo.OBJECT_TYPE}|byname|CMSDefaultCultureCode");
+                    }
+                    
+                    var site= siteID > 0 ? _siteInfoProvider.Get(siteID) : _siteInfoProvider.Get().First();
+                    var defaultCulture = SettingsKeyInfoProvider.GetValue("CMSDefaultCultureCode", site.SiteID);
+                    return string.IsNullOrWhiteSpace(defaultCulture) ? "en-US" : defaultCulture;
+
+                }, new CacheSettings(1440, "StringLocalizerSettingsCulture", siteID));
             }
         }
 
@@ -77,17 +98,17 @@ namespace XperienceCommunity.Localizer.Internal
 
                 var results = ConnectionHelper.ExecuteQuery(
                     @"select StringKey, TranslationText from (
-                        select ROW_NUMBER() over (partition by StringKey order by case when CultureCode = '" + cultureName + @"' then 0 else 1 end) as priority, StringKey, TranslationText from CMS_ResourceString
+                        select ROW_NUMBER() over (partition by StringKey order by case when CultureCode = '" + cultureName + @"' then 0 else case when CultureCode = '" + SiteVisitorDefaultCulture + @"' then 1 else 2 end end) as priority, StringKey, TranslationText from CMS_ResourceString
                         left join CMS_ResourceTranslation on StringID = TranslationStringID
                         left join CMS_Culture on TranslationCultureID = CultureID
-                        where CultureCode in ('" + cultureName + @"', '" + DefaultCulture + @"')
+                        where CultureCode in ('" + cultureName + @"', '" + SiteVisitorDefaultCulture + @"', '"+CMSDefaultCulture+@"')
                         ) combined where priority = 1"
                     , null, QueryTypeEnum.SQLQuery);
                 return results.Tables[0].Rows.Cast<DataRow>()
                     .Select(x => new Tuple<string, string>(ValidationHelper.GetString(x["StringKey"], "").ToLower(), ValidationHelper.GetString(x["TranslationText"], "")))
                     .GroupBy(x => x.Item1)
                     .ToDictionary(key => key.Key, value => value.FirstOrDefault().Item2);
-            }, new CacheSettings(1440, "LocalizedStringDictionary", cultureName, DefaultCulture));
+            }, new CacheSettings(1440, "LocalizedStringDictionary", cultureName, SiteVisitorDefaultCulture, CMSDefaultCulture));
         }
 
         internal LocalizedString LocalizeWithKentico(string name, params object[] arguments)
@@ -114,13 +135,13 @@ namespace XperienceCommunity.Localizer.Internal
                         });
                     }
                     return ResHelper.LocalizeString(name, CurrentCulture);
-                }, new CacheSettings(30, "ResHelperLocalization", name, CurrentCulture, DefaultCulture));
+                }, new CacheSettings(30, "ResHelperLocalization", name, CurrentCulture, SiteVisitorDefaultCulture));
             }
             if (arguments.Length > 0 && !string.IsNullOrWhiteSpace(value))
             {
                 value = string.Format(value, arguments);
             }
-            return new LocalizedString(name, value, string.IsNullOrWhiteSpace(value));
+            return new LocalizedString(name, value, string.IsNullOrWhiteSpace(value) || name.Equals(value, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

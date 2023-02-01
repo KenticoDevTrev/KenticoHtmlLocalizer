@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>13.5.3</Version>
+    <Version>13.5.4</Version>
     <Authors>Trevor</Authors>
     <Company>Heartland Business Systems</Company>
     <Description>Adds fallback support to the IHtmlLocalizer/IStringLocalizer that if a key is not found in the resx, it will use Kentico Xperience's localization and translation system in it's database.  Also allows you to use {$ $} for it to localize, works with data attributes as well</Description>
@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/KenticoDevTrev/KenticoHtmlLocalizer</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
-    <PackageReleaseNotes>Made Resolution use the dictionary from cached call, so once resource string updated it would properly rebuild the cache.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added CMSDefaultCulture Site Setting as fall back, priority now is Current Culture, Site Default Visitor Culture, then Settings CMSDefaultCulture Settings.</PackageReleaseNotes>
     <PackageTags>Kentico, Xperience, Localizer, Translation</PackageTags>
     <RootNamespace>XperienceCommunity.Localizer</RootNamespace>
     <AssemblyName>XperienceCommunity.Localizer</AssemblyName>
