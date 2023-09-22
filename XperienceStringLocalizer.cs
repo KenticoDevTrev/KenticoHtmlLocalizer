@@ -120,7 +120,7 @@ namespace XperienceCommunity.Localizer.Internal
                 var result = _localizer[name];
                 if (result.ResourceNotFound)
                 {
-                    result = LocalizeWithKentico(name, result.SearchedLocation);
+                    result = LocalizeWithKentico(name);
                 }
 
                 return result;
@@ -138,7 +138,7 @@ namespace XperienceCommunity.Localizer.Internal
                 var result = _localizer[name];
                 if (result.ResourceNotFound)
                 {
-                    result = LocalizeWithKentico(name, result.SearchedLocation, arguments);
+                    result = LocalizeWithKentico(name, arguments);
                 }
 
                 return result;

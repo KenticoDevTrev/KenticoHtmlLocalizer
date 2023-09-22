@@ -106,7 +106,7 @@ namespace XperienceCommunity.Localizer.Internal
                 return results.Tables[0].Rows.Cast<DataRow>()
                     .Select(x => new Tuple<string, string>(ValidationHelper.GetString(x["StringKey"], "").ToLower(), ValidationHelper.GetString(x["TranslationText"], "")))
                     .GroupBy(x => x.Item1)
-                    .ToDictionary(key => key.Key, value => value.FirstOrDefault().Item2);
+                    .ToDictionary(key => key.Key, value => value.First().Item2);
             }, new CacheSettings(1440, "LocalizedStringDictionary", cultureName, SiteVisitorDefaultCulture, CMSDefaultCulture));
         }
 
@@ -136,7 +136,7 @@ namespace XperienceCommunity.Localizer.Internal
                     return ResHelper.LocalizeString(name, CurrentCulture);
                 }, new CacheSettings(30, "ResHelperLocalization", name, CurrentCulture, SiteVisitorDefaultCulture));
             }
-            if (arguments.Length > 0 && !string.IsNullOrWhiteSpace(value))
+            if (arguments.Length > 0 && !string.IsNullOrWhiteSpace(value) && value.IndexOf($"{{{arguments.Length-1}}}") != -1)
             {
                 value = string.Format(value, arguments);
             }
